@@ -5,11 +5,12 @@ import CredentialsList from "~components/CredentialsList";
 import Loader from "~components/Loader";
 import type { Credential, EncrytedSharedPrivateKey } from "~types";
 import { decryptSharedCredentialPassword, decryptSharedPrivateKey } from "~utils/cipher";
+import { disableInputToggle } from "~utils/helpers";
 
 
 const Button = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true)
-  const [selectedInput, setSelectedInput] = useState<any>(null)
+  const [selectedInput, setSelectedInput] = useState<HTMLInputElement | null>(null)
   const [isOpen, setIsOpen] = useState<boolean>(true)
 
   const [ sharedCredentials, setSharedCredentials ] = useState<Credential[]>([])
@@ -70,7 +71,7 @@ const Button = () => {
       inputNodes.forEach(node => {
 
         node.addEventListener("focus", () => {
-          setSelectedInput(node)
+          setSelectedInput(node as HTMLInputElement)
 
         })
       })
@@ -95,12 +96,20 @@ const Button = () => {
       return
     }
 
+    console.log({ selectedInput });
+    
     // get the actual password
-
-    await decryptSharedCredentialPassword(credentialPassword, decrytedSharedPrivateKey)
 
     
 
+    // change the selected input to password type
+
+    selectedInput.type = "password"
+    selectedInput.value = `${await decryptSharedCredentialPassword(credentialPassword, decrytedSharedPrivateKey)}`
+
+    // start mutation observer on this Input to avoid changing the input back to text;
+
+    disableInputToggle(selectedInput)
   }
 
 
