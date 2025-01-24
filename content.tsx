@@ -11,23 +11,24 @@ import { disableInputToggle } from "~utils/helpers";
 const Button = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [selectedInput, setSelectedInput] = useState<HTMLInputElement | null>(null)
-  const [isOpen, setIsOpen] = useState<boolean>(true)
+  const [isOpen, setIsOpen] = useState<boolean>(false)
 
-  const [ sharedCredentials, setSharedCredentials ] = useState<Credential[]>([])
+  const [sharedCredentials, setSharedCredentials] = useState<Credential[]>([])
 
   /**
    * Keyboard combo listener to open the Content Window
    */
 
+  const selectedInputType = selectedInput?.type;
   useEffect(() => {
     document.addEventListener("keydown", async ({ repeat, altKey, key }) => {
 
       if (key === "Escape") {
-        
+
         setIsOpen(false)
         return
       }
-      
+
 
       if (repeat) return
 
@@ -36,6 +37,7 @@ const Button = () => {
       setIsOpen(true)
 
     })
+
 
 
     const getCredentials = async () => {
@@ -48,12 +50,12 @@ const Button = () => {
         console.log("Please LogIn")
       } else {
         setSharedCredentials(resp.sharedCredentials)
-        
+
       }
-      
+
       setIsLoading(false)
 
-      
+
     }
 
     getCredentials()
@@ -71,45 +73,58 @@ const Button = () => {
       inputNodes.forEach(node => {
 
         node.addEventListener("focus", () => {
+          console.log(node);
+          
           setSelectedInput(node as HTMLInputElement)
 
         })
       })
     }
-    addInputFocusListener()
+    setTimeout(addInputFocusListener, 500)
 
   }, [])
 
-  const fillPassword = async (credentialPassword : string, masterPassword : string) => {
-    const privateKeyResponse  = await sendToBackground({
-      name : "get-private-key"
+  const fillPassword = async (credentialPassword: string, masterPassword: string) => {
+    const privateKeyResponse = await sendToBackground({
+      name: "get-private-key"
     });
 
-    console.log("PrivateKey ", privateKeyResponse );
-    
     const decrytedSharedPrivateKey = await decryptSharedPrivateKey(privateKeyResponse.privateKey, masterPassword)
 
-
-    
     if (!selectedInput) {
       console.log("input not selected");
       return
     }
 
-    console.log({ selectedInput });
     
-    // get the actual password
-
+    const pass = await decryptSharedCredentialPassword(credentialPassword, decrytedSharedPrivateKey)
     
-
-    // change the selected input to password type
-
+    selectedInput.value = `${pass}`
+    // Dispatch input event to notify the page of the new value
+    const inputEvent = new Event('input', { bubbles: true });
+    selectedInput.dispatchEvent(inputEvent);
+    
     selectedInput.type = "password"
-    selectedInput.value = `${await decryptSharedCredentialPassword(credentialPassword, decrytedSharedPrivateKey)}`
+    // Disable the clipboard/context menu for this field
+    selectedInput.addEventListener('copy', (event) => event.preventDefault());
+    selectedInput.addEventListener('contextmenu', (event) => event.preventDefault());
+
+    // Set the field to readonly to prevent user interaction
+    // selectedInput.readOnly = true
 
     // start mutation observer on this Input to avoid changing the input back to text;
 
-    disableInputToggle(selectedInput)
+    disableInputToggle(selectedInput, selectedInputType)
+
+    setTimeout(() => {
+      selectedInput.setAttribute("value", ""); // Clear the visible value
+    }, 0);
+
+    Object.defineProperty(selectedInput, 'value', {
+      get: () => pass, // Return the decrypted password for submission
+      set: () => {}, // Prevent any new value from being set
+      configurable: true,
+    });
   }
 
 

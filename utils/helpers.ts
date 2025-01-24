@@ -31,7 +31,7 @@ export const fetchCredentialsSharedWithMe = async () => {
  * Disables toggling of password field i.e. User cannot change the password type field to text to see the password
  */
 
-export const disableInputToggle = (inputNode: HTMLInputElement) => {
+export const disableInputToggle = (inputNode: HTMLInputElement, originalType : string) => {
   const config = { attributes: true };
 
   // use mutation observer to check if user tries to change input type to password
@@ -59,7 +59,9 @@ export const disableInputToggle = (inputNode: HTMLInputElement) => {
   // disable observing if the user clears out the input field
 
   inputNode.addEventListener("input", () => {
-    if (inputNode.value === "") observer.disconnect();
+    if (inputNode.value === "") {
+      observer.disconnect()
+    };
   });
 
   function observeAgain(
