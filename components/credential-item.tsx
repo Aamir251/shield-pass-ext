@@ -7,10 +7,10 @@ type CredentialItemProps = {
 }
 
 
-const CredentialItem = ({ credential : { websiteUrl, category, email, name, username , password}, fillPassword  }: CredentialItemProps) => {
+const CredentialItem = ({ credential : { websiteUrl, email, name, username , password}, fillPassword  }: CredentialItemProps) => {
   return (
     <article style={{
-      backgroundColor: "#141415",
+      // backgroundColor: "#141415",
       padding: "12px",
       border: "1px solid #373737",
       borderRadius: "3px",
@@ -44,11 +44,11 @@ const CredentialItem = ({ credential : { websiteUrl, category, email, name, user
 
 
       { email && <div className="email-wrap">
-        <h6 style={{ fontWeight: "normal", fontSize: 14, margin: 0 }} className="email">{email}</h6>
+        <h6 style={{ fontWeight: "normal", fontSize: 14, margin: "5px 0 0 0" }} className="email">{email}</h6>
       </div>}
 
       { username && <div className="username-wrap">
-        <h6 style={{ fontWeight: "normal", fontSize: 14, margin: 0 }} className="username">{username}</h6>
+        <h6 style={{ fontWeight: "normal", fontSize: 14, margin: "5px 0 0 0" }} className="username">{username}</h6>
       </div>}
       
       <button className="copy-password" 

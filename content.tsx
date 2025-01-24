@@ -3,7 +3,9 @@ import { useEffect, useState } from "react";
 import Container from "~components/Container";
 import CredentialsList from "~components/CredentialsList";
 import Loader from "~components/Loader";
-import type { Credential, EncrytedSharedPrivateKey } from "~types";
+import LoginUI from "~components/LoginUI";
+import Wrapper from "~components/Wrapper";
+import type { Credential } from "~types";
 import { decryptSharedCredentialPassword, decryptSharedPrivateKey } from "~utils/cipher";
 import { disableInputToggle } from "~utils/helpers";
 
@@ -11,7 +13,9 @@ import { disableInputToggle } from "~utils/helpers";
 const Button = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [selectedInput, setSelectedInput] = useState<HTMLInputElement | null>(null)
-  const [isOpen, setIsOpen] = useState<boolean>(false)
+  const [isOpen, setIsOpen] = useState<boolean>(true)
+
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
 
   const [sharedCredentials, setSharedCredentials] = useState<Credential[]>([])
 
@@ -47,8 +51,9 @@ const Button = () => {
 
       console.log({ resp })
       if (resp?.message === "UNAUTHORIZED") {
-        console.log("Please LogIn")
+        setIsLoggedIn(false)
       } else {
+        setIsLoggedIn(true)
         setSharedCredentials(resp.sharedCredentials)
 
       }
@@ -74,7 +79,7 @@ const Button = () => {
 
         node.addEventListener("focus", () => {
           console.log(node);
-          
+
           setSelectedInput(node as HTMLInputElement)
 
         })
@@ -96,14 +101,14 @@ const Button = () => {
       return
     }
 
-    
+
     const pass = await decryptSharedCredentialPassword(credentialPassword, decrytedSharedPrivateKey)
-    
+
     selectedInput.value = `${pass}`
     // Dispatch input event to notify the page of the new value
     const inputEvent = new Event('input', { bubbles: true });
     selectedInput.dispatchEvent(inputEvent);
-    
+
     selectedInput.type = "password"
     // Disable the clipboard/context menu for this field
     selectedInput.addEventListener('copy', (event) => event.preventDefault());
@@ -122,23 +127,22 @@ const Button = () => {
 
     Object.defineProperty(selectedInput, 'value', {
       get: () => pass, // Return the decrypted password for submission
-      set: () => {}, // Prevent any new value from being set
+      set: () => { }, // Prevent any new value from being set
       configurable: true,
     });
   }
 
 
   if (!isOpen) return null
+
+  if (!isLoggedIn) return (<Wrapper>
+    <Container>
+      <LoginUI />
+    </Container>
+
+  </Wrapper>)
   return (
-    <section style={{
-      position: "fixed",
-      inset: 0,
-      zIndex: 10000,
-      backgroundColor: "rgb(0 0 0 / 35%)",
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-    }}>
+    <Wrapper>
 
       <Container>
         {
@@ -146,7 +150,7 @@ const Button = () => {
         }
       </Container>
 
-    </section>
+    </Wrapper>
   )
 }
 

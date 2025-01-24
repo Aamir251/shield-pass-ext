@@ -8,8 +8,8 @@ const Container = ({ children } : PropsWithChildren) => {
       margin : "auto",
       backgroundColor : "#0d0d0e",
       padding : "5px",
-      borderRadius : "5px",
-      minHeight : "500px"
+      borderRadius : "8px",
+      minHeight : "300px"
     }}>
 
       {children}

@@ -8,7 +8,7 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
   
 
   const storage = new Storage({
-    area : "local"
+    area : "session"
   })
 
   const data = JSON.parse(await storage.get(ACTIONS.SHARED_CREDENTIALS))

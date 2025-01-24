@@ -8,7 +8,7 @@ const SERVER_URL = "http://localhost:3000"
 
 
 const storage = new Storage({
-  area: "local"
+  area: "session"
 })
 
 export { }
