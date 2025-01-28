@@ -7,6 +7,9 @@ type Props = {
 }
 
 const CredentialsList = ({ credentials, fillPassword } : Props) => {
+
+  console.log({ credentialsList : credentials  });
+  
   return (
     <div style={{
       padding : "10px",

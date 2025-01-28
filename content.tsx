@@ -1,72 +1,43 @@
 import { sendToBackground } from "@plasmohq/messaging";
 import { useEffect, useState } from "react";
 import Container from "~components/Container";
-import CredentialsList from "~components/CredentialsList";
+import CredentialsList from "~components/credentials-list";
 import Loader from "~components/Loader";
-import LoginUI from "~components/LoginUI";
+import LoginForm from "~components/login-form";
+import LoginUI from "~components/login-form";
 import Wrapper from "~components/Wrapper";
-import type { Credential } from "~types";
+import type { Credential, EncrytedSharedPrivateKey } from "~types";
 import { decryptSharedCredentialPassword, decryptSharedPrivateKey } from "~utils/cipher";
 import { disableInputToggle } from "~utils/helpers";
 
 
-const Button = () => {
+const Content = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [selectedInput, setSelectedInput] = useState<HTMLInputElement | null>(null)
-  const [isOpen, setIsOpen] = useState<boolean>(true)
+  const [isOpen, setIsOpen] = useState<boolean>(false)
 
   const [isLoggedIn, setIsLoggedIn] = useState(false)
 
   const [sharedCredentials, setSharedCredentials] = useState<Credential[]>([])
 
+  const [ privateKey, sharedPrivateKey ] = useState<EncrytedSharedPrivateKey>()
+  
   /**
    * Keyboard combo listener to open the Content Window
    */
 
   const selectedInputType = selectedInput?.type;
-  useEffect(() => {
-    document.addEventListener("keydown", async ({ repeat, altKey, key }) => {
 
-      if (key === "Escape") {
+  const loginSuccessHandler = async (credentials : Credential[], privateKey : EncrytedSharedPrivateKey) => {
 
-        setIsOpen(false)
-        return
-      }
-
-
-      if (repeat) return
-
-      if (!altKey || key !== "s") return
-
-      setIsOpen(true)
-
-    })
+    sharedPrivateKey(privateKey)
+    setSharedCredentials(credentials)
+    setIsLoggedIn(true)
+    setIsLoading(false)
 
 
+  }
 
-    const getCredentials = async () => {
-      const resp = await sendToBackground({
-        name: "get-shared-credentials",
-      })
-
-      console.log({ resp })
-      if (resp?.message === "UNAUTHORIZED") {
-        setIsLoggedIn(false)
-      } else {
-        setIsLoggedIn(true)
-        setSharedCredentials(resp.sharedCredentials)
-
-      }
-
-      setIsLoading(false)
-
-
-    }
-
-    getCredentials()
-
-
-  }, [])
 
   useEffect(() => {
 
@@ -76,12 +47,8 @@ const Button = () => {
       );
 
       inputNodes.forEach(node => {
-
         node.addEventListener("focus", () => {
-          console.log(node);
-
           setSelectedInput(node as HTMLInputElement)
-
         })
       })
     }
@@ -89,18 +56,38 @@ const Button = () => {
 
   }, [])
 
-  const fillPassword = async (credentialPassword: string, masterPassword: string) => {
-    const privateKeyResponse = await sendToBackground({
-      name: "get-private-key"
-    });
 
-    const decrytedSharedPrivateKey = await decryptSharedPrivateKey(privateKeyResponse.privateKey, masterPassword)
+  useEffect(() => {
+
+    const handleKeyDown = async ({ repeat, altKey, key }) => {
+      if (key === "Escape") {
+        setIsOpen(false)
+        return
+      }
+
+      if (repeat) return
+      if (!altKey || key !== "s") return
+      setIsOpen(true)
+
+    }
+    document.addEventListener("keydown", handleKeyDown)
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown)
+
+    }
+  }, [])
+
+  const fillPassword = async (credentialPassword: string, masterPassword: string) => {
+    
+    
+
+    const decrytedSharedPrivateKey = await decryptSharedPrivateKey(privateKey, masterPassword)
 
     if (!selectedInput) {
       console.log("input not selected");
       return
     }
-
 
     const pass = await decryptSharedCredentialPassword(credentialPassword, decrytedSharedPrivateKey)
 
@@ -137,7 +124,7 @@ const Button = () => {
 
   if (!isLoggedIn) return (<Wrapper>
     <Container>
-      <LoginUI />
+      <LoginForm loginSuccessHandler={loginSuccessHandler} />
     </Container>
 
   </Wrapper>)
@@ -154,7 +141,7 @@ const Button = () => {
   )
 }
 
-export default Button
+export default Content
 
 
 

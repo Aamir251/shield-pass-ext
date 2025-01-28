@@ -3,24 +3,39 @@ import type { Credential } from "~types"
 const SERVER_URL = "http://localhost:3000"
 
 
-export const fetchCredentialsSharedWithMe = async () => {
+export const fetchCredentialsSharedWithMe = async (formData : FormData) => {
+  try {
+    const email = formData.get("email")
+    const password = formData.get("password")
+
+    if (!email || !password) throw new Error("Fields Missing")
+
+    const resp = await fetch(`${SERVER_URL}/api/shared-credentials`, {
+      method : "POST",
+      body : JSON.stringify({
+        email,
+        password
+      })
+    })
+
+    const data = await resp.json()
 
 
-  const resp = await fetch(`${SERVER_URL}/api/shared-credentials`, {
-    credentials: "include"
-  })
+    if (!data?.success) {
+      throw new Error(data.error)
+    }
 
-  const data = await resp.json()
-
-  console.log({ data })
-
-  if (!data?.success) {
-    throw new Error(data.error)
-  }
-
-  return {
-    credentials : data.credentials,
-    sharedPrivateKey : data.sharedPrivateKey
+    return {
+      success : true,
+      credentials: data.credentials,
+      sharedPrivateKey: data.sharedPrivateKey
+    }
+  } catch (error : any) {
+    
+    return {
+      success : false,
+      error : error.message
+    }
   }
 
 
@@ -31,7 +46,7 @@ export const fetchCredentialsSharedWithMe = async () => {
  * Disables toggling of password field i.e. User cannot change the password type field to text to see the password
  */
 
-export const disableInputToggle = (inputNode: HTMLInputElement, originalType : string) => {
+export const disableInputToggle = (inputNode: HTMLInputElement, originalType: string) => {
   const config = { attributes: true };
 
   // use mutation observer to check if user tries to change input type to password
@@ -71,3 +86,48 @@ export const disableInputToggle = (inputNode: HTMLInputElement, originalType : s
     observer.observe(targetNode, config);
   }
 };
+
+
+
+
+// export const loginHandler = async (formData: FormData) => {
+
+//   try {
+//     const email = formData.get("email")
+//     const password = formData.get("password")
+
+//     if (!email || !password) throw new Error("Fields Missing")
+    
+//     // Make API Request to Login
+
+//     const resp = await fetch(`${SERVER_URL}/api/extension-login`, {
+//       method : "POST",
+//       body : JSON.stringify({
+//         email,
+//         password
+//       })
+//     })
+
+
+//     const data = await resp.json()
+
+//     if (!data.success) throw new Error(data.error as string)
+
+    
+//     return {
+//       success : true,
+//       token : data.token
+//     }
+
+//   } catch (error : any ) {
+
+//     console.log({ error });
+
+//     return {
+//       success : false,
+//       error : error.message as string
+//     }
+    
+//   }
+
+// }
