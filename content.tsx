@@ -1,10 +1,8 @@
-import { sendToBackground } from "@plasmohq/messaging";
 import { useEffect, useState } from "react";
 import Container from "~components/Container";
 import CredentialsList from "~components/credentials-list";
 import Loader from "~components/Loader";
 import LoginForm from "~components/login-form";
-import LoginUI from "~components/login-form";
 import Wrapper from "~components/Wrapper";
 import type { Credential, EncrytedSharedPrivateKey } from "~types";
 import { decryptSharedCredentialPassword, decryptSharedPrivateKey } from "~utils/cipher";
@@ -122,14 +120,14 @@ const Content = () => {
 
   if (!isOpen) return null
 
-  if (!isLoggedIn) return (<Wrapper>
+  if (!isLoggedIn) return (<Wrapper setIsOpen={setIsOpen}>
     <Container>
       <LoginForm loginSuccessHandler={loginSuccessHandler} />
     </Container>
 
   </Wrapper>)
   return (
-    <Wrapper>
+    <Wrapper setIsOpen={setIsOpen}>
 
       <Container>
         {

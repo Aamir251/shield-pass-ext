@@ -9,7 +9,8 @@ const Container = ({ children } : PropsWithChildren) => {
       backgroundColor : "#0d0d0e",
       padding : "5px",
       borderRadius : "8px",
-      minHeight : "300px"
+      minHeight : "300px",
+      border : "1px solid #2f2f2f"
     }}>
 
       {children}
