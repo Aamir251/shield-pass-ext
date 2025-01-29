@@ -74,6 +74,9 @@ export const disableInputToggle = (inputNode: HTMLInputElement, originalType: st
   // disable observing if the user clears out the input field
 
   inputNode.addEventListener("input", () => {
+
+    console.log("value ", inputNode.value);
+    
     if (inputNode.value === "") {
       observer.disconnect()
     };

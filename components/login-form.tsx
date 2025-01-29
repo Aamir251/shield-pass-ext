@@ -50,7 +50,7 @@ const LoginForm = ({ loginSuccessHandler }: LoginFormProps) => {
       }}>
 
         <FormInput attrs={{ placeholder: "Email", name: "email" }} label="Email" />
-        <FormInput attrs={{ placeholder: "Your Master Password", name: "password" }} label="Password" />
+        <FormInput attrs={{ placeholder: "Your Master Password", name: "password", type : "password" }} label="Password" />
 
         <button style={{
           backgroundColor: "whitesmoke",

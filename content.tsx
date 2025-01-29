@@ -12,7 +12,7 @@ import { disableInputToggle } from "~utils/helpers";
 const Content = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [selectedInput, setSelectedInput] = useState<HTMLInputElement | null>(null)
-  const [isOpen, setIsOpen] = useState<boolean>(false)
+  const [isOpen, setIsOpen] = useState<boolean>(true)
 
   const [isLoggedIn, setIsLoggedIn] = useState(false)
 
@@ -77,8 +77,6 @@ const Content = () => {
   }, [])
 
   const fillPassword = async (credentialPassword: string, masterPassword: string) => {
-    
-    
 
     const decrytedSharedPrivateKey = await decryptSharedPrivateKey(privateKey, masterPassword)
 
@@ -100,7 +98,6 @@ const Content = () => {
     selectedInput.addEventListener('contextmenu', (event) => event.preventDefault());
 
     // Set the field to readonly to prevent user interaction
-    // selectedInput.readOnly = true
 
     // start mutation observer on this Input to avoid changing the input back to text;
 
@@ -110,11 +107,6 @@ const Content = () => {
       selectedInput.setAttribute("value", ""); // Clear the visible value
     }, 0);
 
-    Object.defineProperty(selectedInput, 'value', {
-      get: () => pass, // Return the decrypted password for submission
-      set: () => { }, // Prevent any new value from being set
-      configurable: true,
-    });
   }
 
 
