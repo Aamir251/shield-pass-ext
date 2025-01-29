@@ -1,5 +1,5 @@
 
-import icon from "./assets/icon.png"
+import icon from "data-base64:~assets/icon.png"
 
 function IndexPopup() {
   return (

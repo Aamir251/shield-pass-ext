@@ -1,5 +1,5 @@
 import type { PropsWithChildren } from "react"
-import CloseIcon from "assets/close.svg";
+import CloseIcon from "data-base64:~assets/close.svg";
 
 type Props = PropsWithChildren<{
   setIsOpen : React.Dispatch<React.SetStateAction<boolean>>
