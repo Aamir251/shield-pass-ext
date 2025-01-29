@@ -12,27 +12,30 @@ import { disableInputToggle } from "~utils/helpers";
 const Content = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true)
   const [selectedInput, setSelectedInput] = useState<HTMLInputElement | null>(null)
-  const [isOpen, setIsOpen] = useState<boolean>(true)
+  const [isOpen, setIsOpen] = useState<boolean>(false)
 
   const [isLoggedIn, setIsLoggedIn] = useState(false)
 
   const [sharedCredentials, setSharedCredentials] = useState<Credential[]>([])
 
   const [ privateKey, sharedPrivateKey ] = useState<EncrytedSharedPrivateKey>()
+
+  const [ masterPassword, setMasterPassword ] = useState<string>("")
   
   /**
    * Keyboard combo listener to open the Content Window
    */
 
+
   const selectedInputType = selectedInput?.type;
 
-  const loginSuccessHandler = async (credentials : Credential[], privateKey : EncrytedSharedPrivateKey) => {
+  const loginSuccessHandler = async (credentials : Credential[], privateKey : EncrytedSharedPrivateKey, masterPassword : string) => {
 
     sharedPrivateKey(privateKey)
     setSharedCredentials(credentials)
     setIsLoggedIn(true)
     setIsLoading(false)
-
+    setMasterPassword(masterPassword)
 
   }
 
@@ -76,8 +79,10 @@ const Content = () => {
     }
   }, [])
 
-  const fillPassword = async (credentialPassword: string, masterPassword: string) => {
+  const fillPassword = async (credentialPassword: string) => {
 
+
+    
     const decrytedSharedPrivateKey = await decryptSharedPrivateKey(privateKey, masterPassword)
 
     if (!selectedInput) {
@@ -86,6 +91,7 @@ const Content = () => {
     }
 
     const pass = await decryptSharedCredentialPassword(credentialPassword, decrytedSharedPrivateKey)
+
 
     selectedInput.value = `${pass}`
     // Dispatch input event to notify the page of the new value

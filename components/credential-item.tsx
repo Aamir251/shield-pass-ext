@@ -3,7 +3,7 @@ import type { Credential } from "~types"
 type CredentialItemProps = {
   credential: Credential
 
-  fillPassword: (password: string, masterPassword: string) => void
+  fillPassword: (password: string) => void
 }
 
 
@@ -54,7 +54,7 @@ const CredentialItem = ({ credential: { websiteUrl, email, name, username, passw
 
       <button className="copy-password"
         onClick={() => {
-          fillPassword(password, "test123")
+          fillPassword(password)
         }} style={{
           backgroundColor: "#22222A",
           outline: "none",

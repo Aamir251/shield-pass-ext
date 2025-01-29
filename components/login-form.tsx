@@ -6,7 +6,7 @@ import type { Credential, EncrytedSharedPrivateKey } from "~types"
 
 
 type LoginFormProps = {
-  loginSuccessHandler: (credentials: Credential[], privateKey: EncrytedSharedPrivateKey) => Promise<void>
+  loginSuccessHandler: (credentials: Credential[], privateKey: EncrytedSharedPrivateKey, masterPassword : string) => Promise<void>
 }
 
 const LoginForm = ({ loginSuccessHandler }: LoginFormProps) => {
@@ -22,7 +22,7 @@ const LoginForm = ({ loginSuccessHandler }: LoginFormProps) => {
 
       if (!success) throw new Error(error)
         
-      await loginSuccessHandler(credentials as Credential[], sharedPrivateKey as EncrytedSharedPrivateKey)
+      await loginSuccessHandler(credentials as Credential[], sharedPrivateKey as EncrytedSharedPrivateKey, formData.get("password") as string)
 
    
     } catch (error) {

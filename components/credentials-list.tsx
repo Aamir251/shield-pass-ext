@@ -3,7 +3,7 @@ import CredentialItem from "./credential-item"
 
 type Props = {
   credentials: Credential[]
-  fillPassword: (password: string, masterPassword: string) => void
+  fillPassword: (password: string) => void
 }
 
 const CredentialsList = ({ credentials, fillPassword }: Props) => {

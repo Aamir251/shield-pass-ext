@@ -1,6 +1,4 @@
-import type { Credential } from "~types"
-
-const SERVER_URL = "http://localhost:3000"
+import { SERVER_URL } from "./constants"
 
 
 export const fetchCredentialsSharedWithMe = async (formData : FormData) => {

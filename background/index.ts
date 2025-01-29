@@ -2,10 +2,6 @@ import type { Credential } from "~types";
 import { fetchCredentialsSharedWithMe } from "~utils/helpers";
 import { Storage } from "@plasmohq/storage";
 import { ACTIONS } from "~utils/constants";
-import { sendToBackground } from "@plasmohq/messaging";
-
-
-const SERVER_URL = "http://localhost:3000"
 
 
 const storage = new Storage({
